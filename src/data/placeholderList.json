@@ -1,0 +1,8 @@
+{
+	"title": "Give your list a title",
+	"description": "Describe briefly the task to do",
+	"category": "Set-up a category for lor list",
+	"dueDate": "Set-up a due date",
+	"priority": "Give your list higher or lower priority",
+	"notes": "take some notes"
+}
