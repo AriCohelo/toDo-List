@@ -1,0 +1,13 @@
+#container {
+	display: grid;
+	grid-template-columns: 1fr;
+	border: 5px solid blue;
+	padding: 20px;
+}
+
+#createNoteButton {
+	height: 50px;
+	width: 50px;
+	margin: 10px;
+	font-size: 3rem;
+}

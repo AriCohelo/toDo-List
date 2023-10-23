@@ -1,10 +1,11 @@
 const createElements = () => {
-	const elm = ['input', 'h1', 'input', 'h1'];
-	const ids = ['titleInput', 'titleH1', 'descInput', 'descH1'];
+	const elm = ['textarea', 'textarea'];
+	const ids = ['textarea1', 'textarea2'];
 	let elements = [];
-	for (let i = 0; i < 4; i++) {
+	for (let i = 0; i < 2; i++) {
 		elements[i] = document.createElement(elm[i]);
 		elements[i].setAttribute('id', ids[i]);
+		elements[i].classList.add('textarea');
 	}
 	return elements;
 };

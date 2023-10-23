@@ -1,3 +1,3 @@
 import './style.css';
-import * as dataList from './data/placeholderList';
-import * as logic from './logic';
+import * as classes from './objects';
+import * as render from './render';
