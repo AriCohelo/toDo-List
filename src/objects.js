@@ -1,10 +1,50 @@
-import exampleData from './data/exampleData.json';
-import emptyData from './data/emptyData.json';
-let notes = null;
+import placeholderData from './data/placeholderData.json';
+import colors from './data/colors.json';
+import * as render from './render';
+import * as tools from './tools';
+
+let notes = [];
+
+const noteCreatorCont = document.createElement('div');
+noteCreatorCont.setAttribute('id', 'noteCreatorCont');
+const noteCreatorTitle = document.createElement('input');
+noteCreatorTitle.placeholder = 'Title';
+const noteCreatorDesc = document.createElement('input');
+noteCreatorDesc.placeholder = 'Take a note...';
+noteCreatorCont.appendChild(noteCreatorTitle);
+noteCreatorCont.appendChild(noteCreatorDesc);
+
+const palleteSVG = document.createElementNS(
+	'http://www.w3.org/2000/svg',
+	'svg'
+);
+palleteSVG.setAttribute('id', 'palleteSVG');
+const useElm = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+useElm.setAttribute('href', '#pallete');
+palleteSVG.appendChild(useElm);
+noteCreatorCont.appendChild(palleteSVG);
+document.body.appendChild(noteCreatorCont);
+
+class Note {
+	constructor(index, title, description, backColor) {
+		this.index = index;
+		this.title = title || '';
+		this.description = description || '';
+		this.backColor = backColor || '#607D8B';
+		this.ui = new NoteUI(this, document.body);
+	}
+}
+
 class Storage {
 	static save(notes) {
 		const notesCopy = notes.map((note) => {
-			return { title: note.title, description: note.description };
+			//como fuunciona esta linea
+			return {
+				index: note.index,
+				title: note.title,
+				description: note.description,
+				backColor: note.backColor,
+			};
 		});
 		localStorage.setItem('notes', JSON.stringify(notesCopy));
 	}
@@ -14,100 +54,112 @@ class Storage {
 	}
 }
 
-class Note {
-	constructor(object) {
-		this.title = object.title;
-		this.description = object.description;
-		this.ui = new NoteUI(this, document.body);
-		this.backColor = object.backColor;
-	}
-}
-
-// update(updates) {
-// 	this.title = updates.title;
-// 	this.description = updates.description;
-// 	this.ui.update();
-// }
-
 class NoteUI {
 	constructor(note, parent) {
 		this.note = note;
 		this.parent = parent;
-		// this.index = notes.length;
 		this.render();
 	}
 
 	render() {
-		const divBase = document.createElement('div');
-		const titleElm = document.createElement('textarea');
+		const baseDiv = document.createElement('div');
+		baseDiv.setAttribute('id', 'baseDiv');
+		const titleElm = document.createElement('input');
+		titleElm.placeholder = this.note.title || placeholderData.title;
+		const descElm = document.createElement('input');
+		descElm.placeholder = this.note.placeholder || placeholderData.description;
+		const deleteBtn = document.createElement('button');
+		baseDiv.appendChild(titleElm);
+		baseDiv.appendChild(descElm);
+		baseDiv.appendChild(deleteBtn);
+		this.parent.appendChild(baseDiv);
 		this.titleElm = titleElm;
-		const descElm = document.createElement('textarea');
 		this.descElm = descElm;
-		this.parent.appendChild(divBase);
-		divBase.appendChild(titleElm);
-		divBase.appendChild(descElm);
-		const colorInput = document.createElement('input');
-		colorInput.type = 'color';
-		// this.note.backColor = 'green';
-		divBase.appendChild(colorInput);
+		this.baseDiv = baseDiv;
+
+		const palleteSVG = document.createElementNS(
+			'http://www.w3.org/2000/svg',
+			'svg'
+		);
+		palleteSVG.setAttribute('id', 'palleteSVG');
+		const useElm = document.createElementNS(
+			'http://www.w3.org/2000/svg',
+			'use'
+		);
+		useElm.setAttribute('href', '#pallete');
+		palleteSVG.appendChild(useElm);
+		baseDiv.appendChild(palleteSVG);
 
 		this.titleElm.addEventListener('input', () => {
 			this.note.title = this.titleElm.value;
-			// notes[this.index] = updatedNote;
 			this.update();
 			Storage.save(notes);
-
-			console.log(notes);
 		});
 		this.descElm.addEventListener('input', () => {
 			this.note.description = this.descElm.value;
-			// notes[this.index] = updatedNote;
 			this.update();
 			Storage.save(notes);
-
-			console.log(notes);
 		});
-		colorInput.addEventListener('change', () => {
-			this.note.backColor = colorInput.value;
+		palleteSVG.addEventListener('click', () => {
+			const dialog = document.createElement('dialog');
+			dialog.setAttribute('id', 'dialog');
+			const dialogContent = document.createElement('div');
+			dialogContent.setAttribute('id', 'dialogContent');
+			//de nuevo el indice
+			colors.forEach((color, index) => {
+				const colorElm = document.createElement('div');
+				colorElm.classList.add('colorElm');
+				colorElm.setAttribute('id', `colorElm${index}`);
+				colorElm.style.backgroundColor = color;
+
+				colorElm.addEventListener('click', () => {
+					this.note.backColor = colors[index];
+					this.update();
+					Storage.save(notes);
+				});
+				dialogContent.appendChild(colorElm);
+			});
+			dialog.appendChild(dialogContent);
+			document.body.appendChild(dialog);
+			dialog.showModal();
+		});
+
+		deleteBtn.addEventListener('click', () => {
+			console.log(this.note.index);
+			this.delete();
 			this.update();
+			Storage.save(notes);
 		});
-
 		this.update();
 	}
 
 	update() {
 		this.titleElm.value = this.note.title;
 		this.descElm.value = this.note.description;
-		this.titleElm.style.backgroundColor = this.note.backColor;
-
-		// const updatedNote = {
-		// 	title: this.titleElm.value,
-		// 	description: this.descElm.value,
-		// };
-		// notes[this.index] = updatedNote;
+		this.baseDiv.style.backgroundColor = this.note.backColor;
+	}
+	delete() {
+		document.body.removeChild(this.baseDiv);
+		notes.splice(this.note.index, 1);
 	}
 }
-notes = (Storage.load() || []).map((n) => {
-	return new Note(n);
+notes = (Storage.load() || []).map((n, index) => {
+	return new Note(index, n.title, n.description, n.backColor);
 });
-
-console.log(notes);
-
 const addNoteButton = document.createElement('button');
 document.body.appendChild(addNoteButton);
 
 addNoteButton.addEventListener('click', () => {
-	const newNote = new Note(exampleData);
+	const newNote = new Note(notes.length || 0);
 	notes.push(newNote);
-	console.log(newNote);
+	Storage.save(notes);
 	console.log(notes);
 });
+console.log(notes);
 
-// window.n1 = new Note(exampleData);
-
-// this.titleElm.value = Storage.load()
-// ? Storage.load()[this.index - 1].title
-// : this.note.title;
-// this.descElm.value = Storage.load()
-// ? Storage.load()[this.index - 1].description
-// : this.note.description;
+// const colorElements = tools.createElement();
+// console.log(colorElements);
+// colorElements.forEach((elm) => {
+// 	document.body.appendChild(elm);
+// });
+// colorElm1.style.backgroundColor = '#77172E';

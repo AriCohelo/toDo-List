@@ -1,3 +1,4 @@
+import colors from './data/colors.json';
 const createElements = () => {
 	const elm = ['textarea', 'textarea'];
 	const ids = ['textarea1', 'textarea2'];
@@ -18,4 +19,27 @@ const renderElements = () => {
 	});
 	document.body.appendChild(container);
 };
-export { renderElements };
+const changeColor = () => {
+	const dialog = document.createElement('dialog');
+	dialog.setAttribute('id', 'dialog');
+	const dialogContent = document.createElement('div');
+	dialogContent.setAttribute('id', 'dialogContent');
+	//de nuevo el indice
+	colors.forEach((color, index) => {
+		const colorElm = document.createElement('div');
+		colorElm.classList.add('colorElm');
+		colorElm.setAttribute('id', `colorElm${index}`);
+		colorElm.style.backgroundColor = color;
+
+		colorElm.addEventListener('click', () => {
+			this.note.backColor = colors[index];
+			this.update();
+			Storage.save(notes);
+		});
+		dialogContent.appendChild(colorElm);
+	});
+	dialog.appendChild(dialogContent);
+	document.body.appendChild(dialog);
+	dialog.showModal();
+};
+export { renderElements, changeColor };

@@ -11,3 +11,36 @@
 	margin: 10px;
 	font-size: 3rem;
 }
+#palleteSVG {
+	height: 25px;
+	width: 25px;
+}
+.colorElm {
+	height: 30px;
+	width: 30px;
+}
+#dialogContent {
+	display: flex;
+	border: 1px solid black;
+}
+#baseDiv {
+	height: 200px;
+	width: 200px;
+	border: 1px solid black;
+	margin: 20px;
+	padding: 5px;
+}
+input {
+	border: none;
+	-webkit-appearance: none;
+	-ms-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	outline: none;
+	background: none;
+}
+#noteCreatorCont {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid black;
+}
