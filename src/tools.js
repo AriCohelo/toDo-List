@@ -42,4 +42,23 @@ const changeColor = () => {
 	document.body.appendChild(dialog);
 	dialog.showModal();
 };
-export { renderElements, changeColor };
+function createSVGElement(id, href) {
+	const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+	svg.setAttribute('id', id);
+
+	const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+	use.setAttribute('href', href);
+
+	svg.appendChild(use);
+	return svg;
+}
+function createEditableDiv(id) {
+	const div = document.createElement('div');
+	div.setAttribute('role', 'textbox');
+	div.setAttribute('contenteditable', 'true');
+	div.spellcheck = 'true';
+	div.setAttribute('id', id);
+
+	return div;
+}
+export { renderElements, changeColor, createSVGElement, createEditableDiv };

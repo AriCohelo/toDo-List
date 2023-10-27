@@ -11,7 +11,7 @@
 	margin: 10px;
 	font-size: 3rem;
 }
-#palleteSVG {
+svg {
 	height: 25px;
 	width: 25px;
 }
@@ -26,9 +26,9 @@
 #baseDiv {
 	height: 200px;
 	width: 200px;
-	border: 1px solid black;
 	margin: 20px;
-	padding: 5px;
+	padding: 12px 16px;
+	border-radius: 8px;
 }
 input {
 	border: none;
@@ -43,4 +43,19 @@ input {
 	display: flex;
 	flex-direction: column;
 	border: 1px solid black;
+	padding: 5px;
+}
+button {
+	width: 30px;
+	height: 30px;
+	font-size: 2rem;
+	display: flex;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+}
+dialog {
+	outline: none;
+	border-radius: 10px;
+	padding: 5px;
 }

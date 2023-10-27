@@ -8,24 +8,17 @@ let notes = [];
 const noteCreatorCont = document.createElement('div');
 noteCreatorCont.setAttribute('id', 'noteCreatorCont');
 const noteCreatorTitle = document.createElement('input');
-noteCreatorTitle.placeholder = 'Title';
+noteCreatorTitle.placeholder = placeholderData.title;
 const noteCreatorDesc = document.createElement('input');
-noteCreatorDesc.placeholder = 'Take a note...';
+noteCreatorDesc.placeholder = placeholderData.description;
 noteCreatorCont.appendChild(noteCreatorTitle);
 noteCreatorCont.appendChild(noteCreatorDesc);
 
-const palleteSVG = document.createElementNS(
-	'http://www.w3.org/2000/svg',
-	'svg'
-);
-palleteSVG.setAttribute('id', 'palleteSVG');
-const useElm = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-useElm.setAttribute('href', '#pallete');
-palleteSVG.appendChild(useElm);
+const palleteSVG = tools.createSVGElement('palleteSVG', '#pallete');
 noteCreatorCont.appendChild(palleteSVG);
 document.body.appendChild(noteCreatorCont);
 
-class Note {
+export class Note {
 	constructor(index, title, description, backColor) {
 		this.index = index;
 		this.title = title || '';
@@ -35,7 +28,7 @@ class Note {
 	}
 }
 
-class Storage {
+export class Storage {
 	static save(notes) {
 		const notesCopy = notes.map((note) => {
 			//como fuunciona esta linea
@@ -54,7 +47,7 @@ class Storage {
 	}
 }
 
-class NoteUI {
+export class NoteUI {
 	constructor(note, parent) {
 		this.note = note;
 		this.parent = parent;
@@ -68,33 +61,51 @@ class NoteUI {
 		titleElm.placeholder = this.note.title || placeholderData.title;
 		const descElm = document.createElement('input');
 		descElm.placeholder = this.note.placeholder || placeholderData.description;
-		const deleteBtn = document.createElement('button');
+
+		//prueba Div editable
+		const titleDiv = tools.createEditableDiv('titleDiv');
+		const contentDiv = tools.createEditableDiv('contentDiv');
+		baseDiv.appendChild(titleDiv);
+		baseDiv.appendChild(contentDiv);
+		contentDiv.textContent = placeholderData.description;
+		titleDiv.textContent = placeholderData.title;
+		this.titleDiv = titleDiv;
+
+		titleDiv.addEventListener('keydown', function () {
+			if (titleDiv.textContent === placeholderData.title) {
+				titleDiv.textContent = '';
+			}
+		});
+		titleDiv.addEventListener('blur', function () {
+			if (titleDiv.textContent === '') {
+				titleDiv.textContent = placeholderData.title;
+			}
+		});
+		this.titleDiv.addEventListener('input', () => {
+			this.note.title = this.titleDiv.textContent;
+			this.update();
+			Storage.save(notes);
+		});
+		//prueba Div editable
+
 		baseDiv.appendChild(titleElm);
 		baseDiv.appendChild(descElm);
-		baseDiv.appendChild(deleteBtn);
 		this.parent.appendChild(baseDiv);
 		this.titleElm = titleElm;
 		this.descElm = descElm;
 		this.baseDiv = baseDiv;
 
-		const palleteSVG = document.createElementNS(
-			'http://www.w3.org/2000/svg',
-			'svg'
-		);
-		palleteSVG.setAttribute('id', 'palleteSVG');
-		const useElm = document.createElementNS(
-			'http://www.w3.org/2000/svg',
-			'use'
-		);
-		useElm.setAttribute('href', '#pallete');
-		palleteSVG.appendChild(useElm);
+		const palleteSVG = tools.createSVGElement('palleteSVG', '#pallete');
 		baseDiv.appendChild(palleteSVG);
 
-		this.titleElm.addEventListener('input', () => {
-			this.note.title = this.titleElm.value;
-			this.update();
-			Storage.save(notes);
-		});
+		const trashcanSVG = tools.createSVGElement('trashcanSVG', '#trashcan');
+		baseDiv.appendChild(trashcanSVG);
+
+		// this.titleElm.addEventListener('input', () => {
+		// 	this.note.title = this.titleElm.value;
+		// 	this.update();
+		// 	Storage.save(notes);
+		// });
 		this.descElm.addEventListener('input', () => {
 			this.note.description = this.descElm.value;
 			this.update();
@@ -123,18 +134,22 @@ class NoteUI {
 			document.body.appendChild(dialog);
 			dialog.showModal();
 		});
-
-		deleteBtn.addEventListener('click', () => {
-			console.log(this.note.index);
+		trashcanSVG.addEventListener('click', () => {
 			this.delete();
 			this.update();
 			Storage.save(notes);
 		});
+
 		this.update();
 	}
 
+	// update() {
+	// 	this.titleElm.value = this.note.title;
+	// 	this.descElm.value = this.note.description;
+	// 	this.baseDiv.style.backgroundColor = this.note.backColor;
+	// }
 	update() {
-		this.titleElm.value = this.note.title;
+		this.titleDiv.textContent = this.note.title;
 		this.descElm.value = this.note.description;
 		this.baseDiv.style.backgroundColor = this.note.backColor;
 	}
@@ -147,7 +162,8 @@ notes = (Storage.load() || []).map((n, index) => {
 	return new Note(index, n.title, n.description, n.backColor);
 });
 const addNoteButton = document.createElement('button');
-document.body.appendChild(addNoteButton);
+addNoteButton.textContent = '+';
+noteCreatorCont.appendChild(addNoteButton);
 
 addNoteButton.addEventListener('click', () => {
 	const newNote = new Note(notes.length || 0);
@@ -157,9 +173,6 @@ addNoteButton.addEventListener('click', () => {
 });
 console.log(notes);
 
-// const colorElements = tools.createElement();
-// console.log(colorElements);
-// colorElements.forEach((elm) => {
-// 	document.body.appendChild(elm);
-// });
-// colorElm1.style.backgroundColor = '#77172E';
+export { notes };
+
+//como funciona la funcon que quita el texto del placeholder en un input text
