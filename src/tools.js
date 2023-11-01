@@ -1,4 +1,3 @@
-import colors from './data/colors.json';
 const createElements = () => {
 	const elm = ['textarea', 'textarea'];
 	const ids = ['textarea1', 'textarea2'];
@@ -19,36 +18,13 @@ const renderElements = () => {
 	});
 	document.body.appendChild(container);
 };
-const changeColor = () => {
-	const dialog = document.createElement('dialog');
-	dialog.setAttribute('id', 'dialog');
-	const dialogContent = document.createElement('div');
-	dialogContent.setAttribute('id', 'dialogContent');
-	//de nuevo el indice
-	colors.forEach((color, index) => {
-		const colorElm = document.createElement('div');
-		colorElm.classList.add('colorElm');
-		colorElm.setAttribute('id', `colorElm${index}`);
-		colorElm.style.backgroundColor = color;
 
-		colorElm.addEventListener('click', () => {
-			this.note.backColor = colors[index];
-			this.update();
-			Storage.save(notes);
-		});
-		dialogContent.appendChild(colorElm);
-	});
-	dialog.appendChild(dialogContent);
-	document.body.appendChild(dialog);
-	dialog.showModal();
-};
-function createSVGElement(id, href) {
+function createSVGElement(id, href, className) {
 	const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 	svg.setAttribute('id', id);
-
+	svg.classList.add(className);
 	const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
 	use.setAttribute('href', href);
-
 	svg.appendChild(use);
 	return svg;
 }
@@ -61,4 +37,4 @@ function createEditableDiv(id) {
 
 	return div;
 }
-export { renderElements, changeColor, createSVGElement, createEditableDiv };
+export { renderElements, createSVGElement, createEditableDiv };

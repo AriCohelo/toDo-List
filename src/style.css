@@ -11,10 +11,6 @@
 	margin: 10px;
 	font-size: 3rem;
 }
-svg {
-	height: 25px;
-	width: 25px;
-}
 .colorElm {
 	height: 30px;
 	width: 30px;
@@ -58,4 +54,11 @@ dialog {
 	outline: none;
 	border-radius: 10px;
 	padding: 5px;
+}
+svg {
+	height: 25px;
+	width: 25px;
+}
+#pallete {
+	fill: green;
 }

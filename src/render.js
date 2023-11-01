@@ -1,5 +1,7 @@
-// import * as objects from './objects';
-// import notes from './objects';
+import * as objects from './objects';
+import { notes } from './objects';
+//importar por nombre con llaves {}
+//sin llaves solo el default
 
 // const addNoteButton = document.createElement('button');
 // document.body.appendChild(addNoteButton);
