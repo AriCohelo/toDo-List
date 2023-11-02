@@ -4,9 +4,28 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" href="data:," />
+		<link rel="stylesheet" href="https://use.typekit.net/iqw4uoa.css" />
+
 		<title>toDo List</title>
 	</head>
 	<body>
+		<div id="header"></div>
+		<div id="notesContainer">
+			<template id="template">
+				<div id="baseDiv">
+					<input type="text" id="noteTitleInput" />
+					<input type="text" id="noteContentInput" />
+					<div id="noteToolsContainer">
+						<svg id="pallete">
+							<use href="#palleteSVG"></use>
+						</svg>
+						<svg id="trashcanSVG">
+							<use href="#trashcan"></use>
+						</svg>
+					</div>
+				</div>
+			</template>
+		</div>
 		<svg style="display: none">
 			<symbol id="symbolPallete">
 				<path

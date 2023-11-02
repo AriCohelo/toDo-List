@@ -1,27 +1,39 @@
-import placeholderData from './data/placeholderData.json';
+import phData from './data/phData.json';
 import colors from './data/colors.json';
 import * as render from './render';
 import * as tools from './tools';
 
 let notes = [];
 
-const noteCreator = (onPress) => {
-	const noteCreatorCont = document.createElement('div');
-	noteCreatorCont.setAttribute('id', 'noteCreatorCont');
-	const noteCreatorTitle = document.createElement('input');
-	noteCreatorTitle.placeholder = placeholderData.title;
-	const noteCreatorDesc = document.createElement('input');
-	noteCreatorDesc.placeholder = placeholderData.description;
-	noteCreatorCont.appendChild(noteCreatorTitle);
-	noteCreatorCont.appendChild(noteCreatorDesc);
+const creatorTitleInput = document.createElement('input');
+const creatorContentInput = document.createElement('input');
+const noteCreator = (onSave) => {
+	const creatorContainer = document.createElement('div');
+	creatorContainer.setAttribute('id', 'creatorContainer');
+	creatorTitleInput.placeholder = phData.title;
+	creatorTitleInput.setAttribute('id', 'creatorTitleInput');
+	creatorContentInput.placeholder = phData.description;
+	creatorContentInput.setAttribute('id', 'creatorContentInput');
 
-	const palleteSVG = tools.createSVGElement('pallete', '#pallete', 'svg');
-	noteCreatorCont.appendChild(palleteSVG);
-	const addNoteButton = document.createElement('button');
-	addNoteButton.textContent = '+';
-	noteCreatorCont.appendChild(addNoteButton);
-	document.body.appendChild(noteCreatorCont);
-	addNoteButton.addEventListener('click', onPress);
+	creatorContainer.appendChild(creatorTitleInput);
+	creatorContainer.appendChild(creatorContentInput);
+	const saveNoteButton = document.createElement('div');
+	saveNoteButton.textContent = 'Save';
+	saveNoteButton.setAttribute('id', 'saveNoteButton');
+	const toolsContainer = document.createElement('div');
+	toolsContainer.setAttribute('id', 'toolsContainer');
+	toolsContainer.appendChild(saveNoteButton);
+	creatorContainer.appendChild(toolsContainer);
+	header.appendChild(creatorContainer);
+	saveNoteButton.addEventListener('click', onSave);
+
+	// creatorTitleInput.addEventListener('click', () => {
+	// 	var dialog = document.createElement('dialog');
+	// 	creatorContainer.cloneNode(true);
+	// 	dialog.appendChild(creatorContainer);
+	// 	document.body.appendChild(dialog);
+	// 	dialog.showModal();
+	// });
 };
 
 export class Note {
@@ -29,8 +41,8 @@ export class Note {
 		this.index = index;
 		this.title = title || '';
 		this.description = description || '';
-		this.backColor = backColor || '#607D8B';
-		this.ui = new NoteUI(this, document.body);
+		this.backColor = backColor || '#6c394f';
+		this.ui = new NoteUI(this, notesContainer);
 	}
 }
 
@@ -61,31 +73,42 @@ export class NoteUI {
 	}
 
 	render() {
-		const baseDiv = document.createElement('div');
-		baseDiv.setAttribute('id', 'baseDiv');
-		const titleInput = document.createElement('input');
-		titleInput.placeholder = this.note.title || placeholderData.title;
-		const contentInput = document.createElement('input');
-		contentInput.placeholder =
-			this.note.placeholder || placeholderData.description;
-		const palleteSVG = tools.createSVGElement('palleteSVG', '#pallete', 'svg');
-		const trashSVG = tools.createSVGElement('trashcanSVG', '#trashcan', 'svg');
-		baseDiv.appendChild(titleInput);
-		baseDiv.appendChild(contentInput);
-		baseDiv.appendChild(palleteSVG);
-		baseDiv.appendChild(trashSVG);
+		// const baseDiv = document.createElement('div');
+		// baseDiv.setAttribute('id', 'baseDiv');
+		// const noteTitleInput = document.createElement('input');
+		// noteTitleInput.setAttribute('id', 'noteTitleInput');
+		// const noteContentInput = document.createElement('input');
+		// noteContentInput.setAttribute('id', 'noteContentInput');
+		// const palleteSVG = tools.createSVGElement('palleteSVG', '#pallete', 'svg');
+		// const trashSVG = tools.createSVGElement('trashcanSVG', '#trashcan', 'svg');
+		// baseDiv.appendChild(noteTitleInput);
+		// baseDiv.appendChild(noteContentInput);
+		// baseDiv.appendChild(palleteSVG);
+		// baseDiv.appendChild(trashSVG);
+
+		const template = document.getElementById('template');
+		const clone = document.importNode(template.content, true);
+		const baseDiv = clone.querySelector('#baseDiv');
+		const noteTitleInput = clone.querySelector('#noteTitleInput');
+		const noteContentInput = clone.querySelector('#noteContentInput');
+		const noteToolsContainer = clone.querySelector('#noteToolsContainer');
+		const palleteSVG = clone.querySelector('#pallete');
+		const trashSVG = clone.querySelector('#trashcanSVG');
+
+		noteTitleInput.placeholder = this.note.title || phData.title;
+		noteContentInput.placeholder = this.note.placeholder || phData.description;
 		this.parent.appendChild(baseDiv);
-		this.titleInput = titleInput;
-		this.contentInput = contentInput;
+		this.noteTitleInput = noteTitleInput;
+		this.noteContentInput = noteContentInput;
 		this.baseDiv = baseDiv;
 
-		this.titleInput.addEventListener('input', () => {
-			this.note.title = this.titleInput.value;
+		this.noteTitleInput.addEventListener('input', () => {
+			this.note.title = this.noteTitleInput.value;
 			this.update();
 			Storage.save(notes);
 		});
-		this.contentInput.addEventListener('input', () => {
-			this.note.description = this.contentInput.value;
+		this.noteContentInput.addEventListener('input', () => {
+			this.note.description = this.noteContentInput.value;
 			this.update();
 			Storage.save(notes);
 		});
@@ -122,22 +145,33 @@ export class NoteUI {
 		});
 	}
 	update() {
-		this.titleInput.value = this.note.title;
-		this.contentInput.value = this.note.description;
+		this.noteTitleInput.value = this.note.title;
+		this.noteContentInput.value = this.note.description;
 		this.baseDiv.style.backgroundColor = this.note.backColor;
 	}
 	delete() {
-		document.body.removeChild(this.baseDiv);
+		notesContainer.removeChild(this.baseDiv);
 		notes.splice(this.note.index, 1);
+		for (let i = this.note.index; i < notes.length; i++) {
+			notes[i].index = i;
+		} //Gold!!
+		console.log(notes);
 	}
 }
-const onPress = () => {
-	const newNote = new Note(notes.length || 0);
+const onSave = () => {
+	const title = creatorTitleInput.value;
+	const content = creatorContentInput.value;
+	const newNote = new Note(notes.length || 0, title, content);
 	notes.push(newNote);
 	Storage.save(notes);
+	creatorTitleInput.value = '';
+	creatorTitleInput.placeholder = phData.title;
+	creatorContentInput.value = '';
+	creatorContentInput.placeholder = phData.description;
 	console.log(notes);
 };
-noteCreator(onPress);
+noteCreator(onSave);
+
 notes = (Storage.load() || []).map((n, index) => {
 	return new Note(index, n.title, n.description, n.backColor);
 });
