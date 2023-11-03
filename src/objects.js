@@ -20,10 +20,10 @@ const noteCreator = (onSave) => {
 	const saveNoteButton = document.createElement('div');
 	saveNoteButton.textContent = 'Save';
 	saveNoteButton.setAttribute('id', 'saveNoteButton');
-	const toolsContainer = document.createElement('div');
-	toolsContainer.setAttribute('id', 'toolsContainer');
-	toolsContainer.appendChild(saveNoteButton);
-	creatorContainer.appendChild(toolsContainer);
+	const creatorToolsContainer = document.createElement('div');
+	creatorToolsContainer.setAttribute('id', 'creatorToolsContainer');
+	creatorToolsContainer.appendChild(saveNoteButton);
+	creatorContainer.appendChild(creatorToolsContainer);
 	header.appendChild(creatorContainer);
 	saveNoteButton.addEventListener('click', onSave);
 
@@ -41,7 +41,7 @@ export class Note {
 		this.index = index;
 		this.title = title || '';
 		this.description = description || '';
-		this.backColor = backColor || '#6c394f';
+		this.backColor = backColor || '#202124';
 		this.ui = new NoteUI(this, notesContainer);
 	}
 }
@@ -73,26 +73,13 @@ export class NoteUI {
 	}
 
 	render() {
-		// const baseDiv = document.createElement('div');
-		// baseDiv.setAttribute('id', 'baseDiv');
-		// const noteTitleInput = document.createElement('input');
-		// noteTitleInput.setAttribute('id', 'noteTitleInput');
-		// const noteContentInput = document.createElement('input');
-		// noteContentInput.setAttribute('id', 'noteContentInput');
-		// const palleteSVG = tools.createSVGElement('palleteSVG', '#pallete', 'svg');
-		// const trashSVG = tools.createSVGElement('trashcanSVG', '#trashcan', 'svg');
-		// baseDiv.appendChild(noteTitleInput);
-		// baseDiv.appendChild(noteContentInput);
-		// baseDiv.appendChild(palleteSVG);
-		// baseDiv.appendChild(trashSVG);
-
 		const template = document.getElementById('template');
 		const clone = document.importNode(template.content, true);
 		const baseDiv = clone.querySelector('#baseDiv');
 		const noteTitleInput = clone.querySelector('#noteTitleInput');
 		const noteContentInput = clone.querySelector('#noteContentInput');
 		const noteToolsContainer = clone.querySelector('#noteToolsContainer');
-		const palleteSVG = clone.querySelector('#pallete');
+		const palleteSVG = clone.querySelector('#palleteSVG');
 		const trashSVG = clone.querySelector('#trashcanSVG');
 
 		noteTitleInput.placeholder = this.note.title || phData.title;
